@@ -140,11 +140,11 @@
     }
 
     .toggle-btn {
-      background: none;
+      background: rgb(173, 250, 156);
       border: none;
       color: red;
       font-size: 20px;
-      padding: 5px 20px;
+      padding: 3px 20px;
       cursor: pointer;
       z-index: 1002;
       position: fixed;
@@ -173,34 +173,6 @@
       border-radius: 5px;
       border: 1px solid #ccc;
     }
-
-    /* CSS cho mũi tên được cố định ở vị trí dưới nút menu */
-    #instruction-arrow {
-      position: fixed;
-      top: 5px;
-      left: 1px;
-      width: 150px;
-      height: auto;
-      transform: rotate(145deg);
-      animation: pulse 1s infinite;
-      z-index: 400;
-      opacity: 0;
-      transition: opacity 0.5s ease-in-out;
-    }
-
-    @keyframes pulse {
-      0% {
-        transform: scale(1) rotate(190deg);
-      }
-
-      50% {
-        transform: scale(1.1) rotate(145deg);
-      }
-
-      100% {
-        transform: scale(1) rotate(145deg);
-      }
-    }
   </style>
 </head>
 
@@ -213,7 +185,6 @@
 
   <button class="toggle-btn" id="toggleBtn" onclick="showSidebar()">☰</button>
   <div class="overlay" id="overlay" onclick="hideSidebar()"></div>
-  <img id="instruction-arrow" src="muiten.png" alt="Mũi tên" />
   <div class="layout">
     <div class="sidebar" id="sidebar">
       <input type="text" id="search-input" placeholder="Tìm kiếm..." oninput="filterMenu()">
