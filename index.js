@@ -1,5 +1,3 @@
-const instructionArrow = document.getElementById('instruction-arrow');
-
 // ⏰ Hiển thị đồng hồ
 function updateClock() {
     const now = new Date();
@@ -11,17 +9,14 @@ setInterval(updateClock, 1000);
 updateClock();
 
 // ☰ Mở sidebar
-window.showSidebar = function() {
+window.showSidebar = function () {
     document.getElementById('sidebar').classList.add('show');
     document.getElementById('overlay').classList.add('show');
     document.getElementById('toggleBtn').classList.add('hide');
-    // Ẩn mũi tên khi sidebar mở
-    instructionArrow.style.opacity = '0';
-    instructionArrow.style.pointerEvents = 'none'; // Thêm dòng này
 }
 
 // ❌ Đóng sidebar + collapse thẻ cha
-window.hideSidebar = function() {
+window.hideSidebar = function () {
     const sidebar = document.getElementById('sidebar');
     const overlay = document.getElementById('overlay');
     const toggleBtn = document.getElementById('toggleBtn');
@@ -37,12 +32,8 @@ window.hideSidebar = function() {
 }
 
 // 🔁 Chuyển trang + tô màu
-window.loadPage = function(event, pageUrl) {
+window.loadPage = function (event, pageUrl) {
     const iframeView = document.getElementById('iframeView');
-    
-    // Ẩn mũi tên ngay lập tức và ngăn chặn click
-    instructionArrow.style.opacity = '0';
-    instructionArrow.style.pointerEvents = 'none';
 
     // Đặt src của iframe
     iframeView.src = pageUrl;
@@ -50,7 +41,7 @@ window.loadPage = function(event, pageUrl) {
     // Reset màu nút
     document.querySelectorAll('.sidebar button').forEach(btn => btn.classList.remove('active'));
     document.querySelectorAll('.sidebar details').forEach(detail => detail.classList.remove('active-parent'));
-    
+
     // Tô màu nút đã chọn
     const clickedBtn = event.target;
     const parentDetail = clickedBtn.closest('details');
@@ -74,7 +65,7 @@ document.querySelectorAll('.sidebar details').forEach((detail) => {
 });
 
 // Lọc menu
-window.filterMenu = function() {
+window.filterMenu = function () {
     const input = document.getElementById('search-input');
     const filter = input.value.toLowerCase();
     const sidebar = document.getElementById('sidebar');
@@ -130,45 +121,3 @@ window.filterMenu = function() {
         }
     }
 }
-
-// ✅ Logic hoàn chỉnh để kiểm soát mũi tên
-const iframeView = document.getElementById('iframeView');
-// Giả định 'instructionArrow' đã được định nghĩa và có thể truy cập được
-
-iframeView.addEventListener('load', function() {
-    // Luôn truy cập location của iframe sau khi tải xong
-    const currentSrc = iframeView.contentWindow.location.href;
-    
-    // ĐỊNH NGHĨA DANH SÁCH CÁC TRANG CẦN ẨN MŨI TÊN
-    const pagesToHideArrow = [
-        'lichthi.html', 
-        'timmonthi.html', // Đã sửa lỗi logic từ lần trước
-        'thoikhoabieu.html', 
-        'tinhdiemdtu.html', 
-        'dtumaps.html', 
-        'anhsv.html',
-        'tinhdiemhocphandtu.html'
-    ];
-    
-    // KIỂM TRA: Sử dụng .some() để kiểm tra xem URL có chứa BẤT KỲ chuỗi nào trong danh sách không
-    const shouldHide = pagesToHideArrow.some(page => currentSrc.includes(page));
-
-    if (shouldHide) {
-        // Nếu URL chứa BẤT KỲ trang nào trong danh sách, mũi tên sẽ ẩn và không nhận click.
-        instructionArrow.style.opacity = '0';
-        instructionArrow.style.pointerEvents = 'none';
-    } else {
-        // Ngược lại, mũi tên sẽ hiển thị và nhận click.
-        instructionArrow.style.opacity = '1';
-        instructionArrow.style.pointerEvents = 'auto';
-    }
-});
-
-// ---
-
-// Hiển thị mũi tên khi trang vừa tải lần đầu
-window.onload = function() {
-    instructionArrow.style.opacity = '1';
-    instructionArrow.style.pointerEvents = 'auto';
-};
-
