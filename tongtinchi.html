@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Tổng tín chỉ</title>
+    <title>Tổng tín chỉ và Môn học</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
@@ -16,6 +16,8 @@
             --bg-app: #f1f5f9;
             --primary: #2563eb;
             --primary-dark: #1d4ed8;
+            --secondary: #059669;
+            /* Màu xanh lá cho số môn */
             --text-main: #0f172a;
             --text-sub: #64748b;
             --border-color: #cbd5e1;
@@ -177,7 +179,6 @@
             background: #ffffff;
             width: 100%;
             max-width: 900px;
-            /* Mặc định hiển thị trên màn hình là 2 cột (900px đủ cho 2 cột 350px) */
             box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.25);
             border-radius: 8px;
             padding: 40px;
@@ -187,37 +188,49 @@
             margin: auto;
         }
 
+        /* SECTION HEADER MỚI: CHIA 2 CỘT */
         .total-section {
-            text-align: center;
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            /* Khoảng cách giữa 2 số */
             margin-bottom: 30px;
             border-bottom: 2px solid #f1f5f9;
-            padding-bottom: 20px;
+            padding-bottom: 25px;
+        }
+
+        .stat-box {
+            text-align: center;
+            min-width: 150px;
         }
 
         .score-huge {
             font-size: 64px;
             font-weight: 900;
             line-height: 1;
-            color: var(--primary);
             letter-spacing: -2px;
         }
 
+        .score-credits {
+            color: var(--primary);
+        }
+
+        .score-subjects {
+            color: var(--secondary);
+        }
+
         .score-label {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
             color: #64748b;
             margin-top: 8px;
         }
 
-        /* GRID: Đây là phần quan trọng */
+        /* GRID */
         .grid-years {
             display: grid;
-            /* Tự động chia cột: Mỗi cột tối thiểu 350px. 
-               - Nếu khung rộng 1000px -> 2 cột.
-               - Nếu khung rộng 1800px -> 4 cột.
-            */
             grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: 20px;
             width: 100%;
@@ -331,6 +344,15 @@
             .grid-years {
                 grid-template-columns: 1fr;
             }
+
+            /* Responsive cho phần header mới */
+            .total-section {
+                gap: 30px;
+            }
+
+            .score-huge {
+                font-size: 48px;
+            }
         }
     </style>
 </head>
@@ -339,7 +361,7 @@
 
     <div class="app-container">
         <div class="control-panel">
-            <div class="app-title">Tổng tín chỉ</div>
+            <div class="app-title">Tính Tín Chỉ</div>
             <div class="toolbar">
                 <button class="btn btn-paste" onclick="pasteText()">📋 Dán</button>
                 <button id="btnCam" class="btn btn-cam" onclick="copySmartLayout()">📸 Chụp</button>
@@ -350,12 +372,20 @@
 
         <div class="preview-panel">
             <div class="scroll-container">
-                <div id="empty" class="empty-state">...</div>
+                <div id="empty" class="empty-state">Dán dữ liệu để xem kết quả...</div>
+
                 <div id="card" class="paper-card">
                     <div class="total-section">
-                        <div class="score-huge" id="grandTotal">0</div>
-                        <div class="score-label">Tổng Tín Chỉ Tích Lũy</div>
+                        <div class="stat-box">
+                            <div class="score-huge score-credits" id="grandTotal">0</div>
+                            <div class="score-label">Tổng Tín Chỉ</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="score-huge score-subjects" id="totalSubjects">0</div>
+                            <div class="score-label">Tổng Môn Học</div>
+                        </div>
                     </div>
+
                     <div class="grid-years" id="grid"></div>
                 </div>
             </div>
@@ -382,7 +412,7 @@
             document.getElementById('input').focus();
         }
 
-        // 3. COPY THÔNG MINH (LOGIC CHỤP ẢNH MỚI)
+        // 3. COPY THÔNG MINH
         function copySmartLayout() {
             const node = document.getElementById('card');
             const btn = document.getElementById('btnCam');
@@ -392,28 +422,20 @@
                 alert("Chưa có dữ liệu!"); return;
             }
 
-            // Đếm số năm
             const yearsCount = node.querySelectorAll('.year-box').length;
-
-            // LOGIC "CHỐT" CỘT:
-            // - Nếu <= 6 năm (vd: 4 năm): Width = 1000px => Chắc chắn chia 2 CỘT (vì minmax 350px * 2 + gap + padding ~ 800px < 1000px)
-            // - Nếu > 6 năm (vd: 15 năm): Width = 1800px => Chắc chắn chia 4 CỘT (vì minmax 350px * 4 + gap + padding ~ 1600px < 1800px)
             let captureWidth = yearsCount > 6 ? 1800 : 1000;
 
             btn.innerHTML = "⏳ Đang xử lý...";
 
             html2canvas(node, {
                 backgroundColor: "#ffffff",
-                scale: 3, // HD
+                scale: 3,
                 useCORS: true,
                 logging: false,
-                width: captureWidth, // Ép độ rộng canvas
-                windowWidth: captureWidth, // Ép độ rộng cửa sổ ảo
-
-                // Can thiệp trước khi chụp
+                width: captureWidth,
+                windowWidth: captureWidth,
                 onclone: (clonedDoc) => {
                     const clonedCard = clonedDoc.getElementById('card');
-                    // Ép CSS cho bản sao để ra đúng số cột mong muốn
                     clonedCard.style.width = captureWidth + 'px';
                     clonedCard.style.maxWidth = 'none';
                     clonedCard.style.height = 'auto';
@@ -435,7 +457,7 @@
             });
         }
 
-        // 4. LOGIC TÍNH TOÁN
+        // 4. LOGIC TÍNH TOÁN & ĐẾM MÔN
         function run() {
             let val = document.getElementById('input').value;
             let card = document.getElementById('card');
@@ -451,12 +473,14 @@
             let lines = val.split('\n');
             let data = {};
             let grand = 0;
+            let totalSub = 0; // Biến đếm tổng số môn
             let curY = 0, curS = 0;
 
             lines.forEach(l => {
                 l = l.trim();
                 if (!l) return;
 
+                // Regex tìm Năm/Kỳ
                 let m = l.match(/(?:Học Kỳ|HK)\s*(\d+).*?(?:Năm)\s*(\d+)/i);
                 if (m) {
                     curS = parseInt(m[1]);
@@ -466,14 +490,16 @@
                     return;
                 }
 
+                // Regex tìm môn (Dựa vào số tín chỉ ở cuối dòng)
                 if (curY > 0 && !l.includes("Số ĐVHT") && !l.includes("Mã Môn")) {
-                    let cm = l.match(/(\d{1,2})\s*$/);
+                    let cm = l.match(/(\d{1,2})\s*$/); // Tìm số cuối dòng (1-2 chữ số)
                     if (cm) {
                         let c = parseInt(cm[1]);
-                        if (c > 0 && c < 20) {
+                        if (c > 0 && c < 20) { // Giả sử tín chỉ môn học hợp lệ từ 1-19
                             data[curY].s[curS] += c;
                             data[curY].t += c;
                             grand += c;
+                            totalSub++; // Tăng biến đếm môn
                         }
                     }
                 }
@@ -482,9 +508,11 @@
             let keys = Object.keys(data).sort((a, b) => a - b);
             if (keys.length === 0) return;
 
+            // Cập nhật UI
             document.getElementById('grandTotal').innerText = grand;
-            let h = '';
+            document.getElementById('totalSubjects').innerText = totalSub; // Hiển thị tổng môn
 
+            let h = '';
             keys.forEach(y => {
                 let sems = data[y].s;
                 let sKeys = Object.keys(sems).sort((a, b) => a - b);
